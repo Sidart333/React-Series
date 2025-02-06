@@ -5,19 +5,24 @@ import './App.css'
 
 function App() {
 
-  let[counter, setCounter]=useState(15)
-  
+  let [counter, setCounter] = useState(5)
 
   // let counter = 5
   const addValue = () => {
-    counter += 1;
-    setCounter(counter)
-    // console.log('clicked', Math.round(Math.random() * 10 + 1));
-    console.log('clicked add button', counter);
+    if (counter < 20) {
+    
+      counter += 1;
+      setCounter(counter)
   }
+    console.log('clicked add button', counter);
+    // console.log('clicked', Math.round(Math.random() * 10 + 1));
+  }
+
   const removeValue = () => {
-    counter -= 1
-    setCounter(counter)
+    if (counter > 0) {
+      counter -= 1
+      setCounter(counter)
+    }
     console.log('Clicked remove button',counter);
     
 }
