@@ -12,10 +12,7 @@ function App() {
     if (counter < 20) {
     
       counter += 1;
-      setCounter(prevCounter => prevCounter + 1) // callback function
-      setCounter(prevCounter => prevCounter + 1)
-      setCounter(prevCounter => prevCounter + 1)
-      setCounter(prevCounter => prevCounter + 1)
+    
   }
     console.log('clicked add button', counter);
     // console.log('clicked', Math.round(Math.random() * 10 + 1));
