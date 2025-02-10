@@ -75,9 +75,9 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+    <div className="flex flex-col items-center justify-center min-h-screen text-black">
       <h1 className="text-3xl font-bold mb-4">To-Do List</h1>
-      <div className="flex items-center space-x-2 mb-4">
+      <div className="flex items-center gap-4 mb-4">
         <Input
           value={task}
           onChange={(e) => setTask(e.target.value)}
@@ -116,8 +116,9 @@ function App() {
           >
             <Text
               onClick={() => toggleTask(index)}
-              delete={t.completed}
-              className="cursor-pointer border-white text-white"
+              className={`cursor-pointer border-white text-white ${
+                t.completed ? "line-through text-gray-500" : ""
+              }`}
             >
               {t.text}
             </Text>
