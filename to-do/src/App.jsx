@@ -82,7 +82,7 @@ function App() {
           value={task}
           onChange={(e) => setTask(e.target.value)}
           onPressEnter={addTask}
-          className="px-3 py-2 rounded-md max-w-64 w-full"
+          className="px-3 py-2 rounded-md max-w-64 w-full bg-white text-black"
           placeholder="Enter your task..."
         />
         <Button type="primary" onClick={addTask}>
@@ -90,16 +90,26 @@ function App() {
         </Button>
       </div>
       <List
-        className="w-96 text-white"
+        className="w-96 text-white border border-white"
         bordered
         dataSource={tasks}
         renderItem={(t, index) => (
           <List.Item
+            className="text-white border-b border-white"
             actions={[
-              <Button type="link" onClick={() => openEditModal(index)}>
+              <Button
+                type="link"
+                onClick={() => openEditModal(index)}
+                key="edit"
+              >
                 Edit
               </Button>,
-              <Button type="link" danger onClick={() => deleteTask(index)}>
+              <Button
+                type="link"
+                danger
+                onClick={() => deleteTask(index)}
+                key="delete"
+              >
                 Delete
               </Button>,
             ]}
@@ -107,7 +117,7 @@ function App() {
             <Text
               onClick={() => toggleTask(index)}
               delete={t.completed}
-              className="cursor-pointer"
+              className="cursor-pointer border-white text-white"
             >
               {t.text}
             </Text>
@@ -122,7 +132,7 @@ function App() {
         onOk={handleEditTask}
         onCancel={() => setIsModalOpen(false)}
       >
-        <Input 
+        <Input
           value={currentTask.text}
           onChange={(e) =>
             setCurrentTask({ ...currentTask, text: e.target.value })
