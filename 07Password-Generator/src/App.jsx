@@ -13,19 +13,19 @@ function App() {
     let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     if (numAllowed) str += "0123456789";
     if (charAllowed) str += "!@#$%{}/*&^~`+_)(";
-    for (let i = 0; i <= length; i++) {
+    for (let i = 0; i < length; i++) {
       let char = Math.floor(Math.random() * str.length + 1);
       pass += str.charAt(char);
     }
 
     setPassword(pass);
   }, [length, numAllowed, charAllowed, setPassword]);
-    
-    const copyPasswordToClipboard = useCallback(() => { 
-        passwordRef.current?.select()
-        passwordRef.current?.setSelectionRange(0, 8)
-        window.navigator.clipboard.writeText(password  )
-    }, [password])
+
+  const copyPasswordToClipboard = useCallback(() => {
+    passwordRef.current?.select();
+    passwordRef.current?.setSelectionRange(0, 8);
+    window.navigator.clipboard.writeText(password);
+  }, [password]);
 
   useEffect(() => {
     passwordGenerator();
@@ -46,7 +46,10 @@ function App() {
               ref={passwordRef}
             />
           </div>
-          <button onClick={copyPasswordToClipboard} className="bg-slate-100 px-5 hover:bg-slate-200 rounded-lg cursor-pointer">
+          <button
+            onClick={copyPasswordToClipboard}
+            className="bg-slate-100 px-5 hover:bg-slate-200 rounded-lg cursor-pointer"
+          >
             Copy
           </button>
         </div>
