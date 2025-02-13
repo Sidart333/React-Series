@@ -1,24 +1,17 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Users from "./components/Users";
-import Projects from "./components/Projects";
-import Tasks from "./components/Tasks";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import { useState } from "react";
+import "@ant-design/v5-patch-for-react-19";
+import Header from "./components/Header/Header";
+import Footer from "./components/Footer/Footer";
+import "./App.css";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </Router>
+    <>
+      <Header />
+      <Outlet />
+      <Footer />
+    </>
   );
 }
 
