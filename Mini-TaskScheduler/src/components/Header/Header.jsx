@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Button, Modal, Form, Input, message } from "antd";
+import bcrypt from "bcryptjs";
 
 export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    setUsers(storedUsers);
+  }, []);
 
   // Open modal
   const showModal = () => {
@@ -16,8 +23,12 @@ export default function Header() {
     form
       .validateFields()
       .then((values) => {
+        if (users.some((user) => user.email === values.email)) {
+          message.error("Email already exists");
+          return;
+        }
         saveUserToLocalStorage(values);
-        message.success("User added successfully!")
+        message.success("User added successfully!");
         form.resetFields();
         setIsModalOpen(false);
       })
@@ -33,10 +44,18 @@ export default function Header() {
   };
 
   // Save user data to local storage
-  const saveUserToLocalStorage = (user) => {
+  const saveUserToLocalStorage = async (user) => {
     const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
-    existingUsers.push(user);
+
+    // Hash the password before storing
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+
+    // Store the user with hashed password
+    existingUsers.push({ ...user, password: hashedPassword });
+
     localStorage.setItem("users", JSON.stringify(existingUsers));
+    setUsers(existingUsers);
+    window.dispatchEvent(new Event("storage"));
   };
 
   return (
@@ -130,9 +149,13 @@ export default function Header() {
             name="phone"
             rules={[
               { required: true, message: "Please enter your phone number" },
+              {
+                pattern: /^[0-9]{10}$/,
+                message: "Phone number must be exactly 10 digits",
+              },
             ]}
           >
-            <Input />
+            <Input maxLength={10} />
           </Form.Item>
           <Form.Item
             label="Email"
@@ -150,7 +173,18 @@ export default function Header() {
           <Form.Item
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Please enter a password" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please enter a password",
+              },
+              {
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$])[A-Za-z\d!@#$]{8,16}$/,
+                message:
+                  "Password must be 8-16 characters long, contain uppercase, lowercase, a number, and one special character (!@#$)",
+              },
+            ]}
           >
             <Input.Password />
           </Form.Item>

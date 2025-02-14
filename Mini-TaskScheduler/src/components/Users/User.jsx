@@ -8,11 +8,33 @@ export default function Users() {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-    setUsers(storedUsers);
+    const loadUsers = () => {
+      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+      setUsers(storedUsers);
+    };
+
+    loadUsers(); // Load users initially
+    window.addEventListener("storage", loadUsers);
+
+    return () => {
+      window.removeEventListener("storage", loadUsers);
+    };
   }, []);
 
   const handleDelete = (email) => {
+    const storedProjects = JSON.parse(localStorage.getItem("projects")) || [];
+
+    // Check if user is assigned to any project
+    const isUserAssigned = storedProjects.some((project) =>
+      project.users.includes(email)
+    );
+
+    if (isUserAssigned) {
+      message.error("User is assigned to a project and cannot be deleted.");
+      return;
+    }
+
+    // Proceed with deletion if not assigned
     const updatedUsers = users.filter((user) => user.email !== email);
     setUsers(updatedUsers);
     localStorage.setItem("users", JSON.stringify(updatedUsers));
@@ -27,6 +49,15 @@ export default function Users() {
 
   const handleEdit = () => {
     form.validateFields().then((values) => {
+      const emailExists = users.some(
+        (user) =>
+          user.email === values.email && user.email !== editingUser.email
+      );
+      if (emailExists) {
+        message.error("Email already exists");
+        return;
+      }
+
       const updatedUsers = users.map((user) =>
         user.email === editingUser.email ? { ...user, ...values } : user
       );
@@ -71,7 +102,9 @@ export default function Users() {
 
   return (
     <div>
-      <h2 className="flex justify-center text-5xl py-2 bg-slate-500 text-white">User List</h2>
+      <h2 className="flex justify-center text-5xl py-2 bg-slate-500 text-white">
+        User List
+      </h2>
       <Table columns={columns} dataSource={users} rowKey="email" />
 
       <Modal
@@ -91,12 +124,28 @@ export default function Users() {
           <Form.Item
             label="Phone No"
             name="phone"
-            rules={[{ required: true, message: "Please enter phone number" }]}
+            rules={[
+              { required: true, message: "Please enter phone number" },
+              {
+                pattern: /^[0-9]{10}$/,
+                message: "Phone number must be exactly 10 digits",
+              },
+            ]}
+          >
+            <Input maxLength={10} />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a valid email",
+                type: "email",
+              },
+            ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item label="Email (Uneditable)" name="email">
-            <Input disabled />
           </Form.Item>
         </Form>
       </Modal>
