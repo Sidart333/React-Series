@@ -35,6 +35,20 @@ export default function Project() {
 
   const handleOk = () => {
     form.validateFields().then((values) => {
+      // Check for duplicate project name (case-insensitive)
+      const isDuplicate = projects.some(
+        (proj) =>
+          proj.name.toLowerCase() === values.name.toLowerCase() &&
+          proj.key !== (editingProject?.key || null)
+      );
+
+      if (isDuplicate) {
+        message.error(
+          "Project name already exists! Please use a different name."
+        );
+        return;
+      }
+
       let updatedProjects;
       if (editingProject) {
         updatedProjects = projects.map((proj) =>
@@ -52,6 +66,7 @@ export default function Project() {
           key: Date.now(),
           users: Array.isArray(values.users) ? values.users : [],
         };
+
         updatedProjects = [...projects, newProject];
       }
 
@@ -147,10 +162,17 @@ export default function Project() {
           <Form.Item
             name="name"
             label="Project Name"
-            rules={[{ required: true, message: "Please enter project name!" }]}
+            rules={[
+              { required: true, message: "Please enter project name!" },
+              {
+                min: 5,
+                message: "Project name must be at least 5 characters long!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
+
           <Form.Item
             name="description"
             label="Project Description"

@@ -5,6 +5,8 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -21,24 +23,37 @@ export default function Users() {
     };
   }, []);
 
-  const handleDelete = (email) => {
+  const confirmDelete = (email) => {
+    setUserToDelete(email);
+    setDeleteConfirmVisible(true);
+  };
+
+  const handleDelete = () => {
+    if (!userToDelete) return;
     const storedProjects = JSON.parse(localStorage.getItem("projects")) || [];
 
     // Check if user is assigned to any project
     const isUserAssigned = storedProjects.some((project) =>
-      project.users.includes(email)
+      project.users.includes(userToDelete)
     );
 
     if (isUserAssigned) {
       message.error("User is assigned to a project and cannot be deleted.");
+      setDeleteConfirmVisible(false);
       return;
     }
 
     // Proceed with deletion if not assigned
-    const updatedUsers = users.filter((user) => user.email !== email);
+    const updatedUsers = users.filter((user) => user.email !== userToDelete);
     setUsers(updatedUsers);
     localStorage.setItem("users", JSON.stringify(updatedUsers));
     message.success("User deleted successfully!");
+    setDeleteConfirmVisible(false);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmVisible(false);
+    setUserToDelete(null);
   };
 
   const showEditModal = (user) => {
@@ -89,7 +104,7 @@ export default function Users() {
             Edit
           </Button>
           <Button
-            onClick={() => handleDelete(record.email)}
+            onClick={() => confirmDelete(record.email)}
             danger
             style={{ marginLeft: 8 }}
           >
@@ -148,6 +163,17 @@ export default function Users() {
             <Input />
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Confirm Deletion"
+        open={deleteConfirmVisible}
+        onOk={handleDelete}
+        onCancel={handleCancelDelete}
+        okText="Yes, Delete"
+        cancelText="Cancel"
+      >
+        <p>Are you sure you want to delete this user?</p>
       </Modal>
     </div>
   );
