@@ -89,12 +89,22 @@ export default function Project() {
     setEditingProject(null);
   };
 
-  const handleDelete = (key) => {
-    const updatedProjects = projects.filter((proj) => proj.key !== key);
-    setProjects(updatedProjects);
-    localStorage.setItem("projects", JSON.stringify(updatedProjects));
-    message.success("Project deleted successfully!");
-  };
+const handleDelete = (key) => {
+  Modal.confirm({
+    title: "Are you sure you want to delete this project?",
+    content: "This action cannot be undone.",
+    okText: "Yes, Delete",
+    okType: "danger",
+    cancelText: "Cancel",
+    onOk: () => {
+      const updatedProjects = projects.filter((proj) => proj.key !== key);
+      setProjects(updatedProjects);
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      message.success("Project deleted successfully!");
+    },
+  });
+};
+
 
   const columns = [
     { title: "Project Name", dataIndex: "name", key: "name" },
@@ -125,32 +135,33 @@ export default function Project() {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <>
+        <div style={{ display: "flex", gap: "10px" }}>
           <Button onClick={() => showModal(record)} type="primary">
             Edit
           </Button>
-          <Button
-            onClick={() => handleDelete(record.key)}
-            danger
-            style={{ marginLeft: 8 }}
-          >
+          <Button onClick={() => handleDelete(record.key)} danger>
             Delete
           </Button>
-        </>
+        </div>
       ),
     },
   ];
 
   return (
     <div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => showModal()}
         style={{ marginBottom: 16 }}
       >
         Add Project
-      </Button>
-      <Table rowKey="key" columns={columns} dataSource={projects} />
+      </Button> */}
+      <Table
+        rowKey="key"
+        columns={columns}
+        dataSource={projects}
+        pagination={{ pageSize: 8 }}
+      />
 
       <Modal
         title={editingProject ? "Edit Project" : "Add Project"}
@@ -200,6 +211,13 @@ export default function Project() {
           </Form.Item>
         </Form>
       </Modal>
+      <Button
+        type="primary"
+        onClick={() => showModal()}
+        style={{ marginBottom: 16, marginLeft: 1500 }}
+      >
+        Add Project
+      </Button>
     </div>
   );
 }

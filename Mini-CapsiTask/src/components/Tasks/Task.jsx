@@ -146,6 +146,7 @@ const [editingTask, setEditingTask] = useState(null);
         dataSource={tasks}
         rowKey="task"
         className="mt-4"
+        pagination={{ pageSize: 8 }}
       />
 
       <Modal
@@ -278,7 +279,7 @@ const [editingTask, setEditingTask] = useState(null);
             </Select>
           </Form.Item>
         </Form>
-      </Modal>  
+      </Modal>
     </div>
   );
 }

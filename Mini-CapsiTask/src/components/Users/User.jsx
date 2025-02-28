@@ -120,7 +120,12 @@ export default function Users() {
       <h2 className="flex justify-center text-5xl py-2 bg-slate-500 text-white">
         User List
       </h2>
-      <Table columns={columns} dataSource={users} rowKey="email" />
+      <Table
+        columns={columns}
+        dataSource={users}
+        rowKey="email"
+        pagination={{ pageSize: 8 }}
+      />
 
       <Modal
         title="Edit User"
